@@ -348,7 +348,6 @@ const orderCancel = async (req, res) => {
 
     const couponData = await Coupon.findOne({ code: order.coupon });
 
-    console.log(couponData);
     if (product && product.product) {
 
       if (product.status === "Confirmed") {
@@ -447,17 +446,8 @@ const returnData = async (req, res) => {
         // Update total amount considering refunds
         totalAmount -= (product.price * product.quantity) - ((product.price * product.quantity) * (couponData?.discount != null ? couponData.discount : 0) / 100);
 
-        // Handle payment method and update payment status
-        if (
-          product.paymentMethod === "Wallet" ||
-          product.paymentMethod === "Online Payment"
-        ) {
-          // Update wallet data accordingly
-          // ... (existing logic for wallet update)
-          product.paymentStatus = "Refunded";
-        } else {
-          product.paymentStatus = "Declined";
-        }
+        product.paymentStatus = "Refunded";
+
       } else {
         // If the product status isn't "Delivered", return an error
         return res.status(400).json({ error: "Product status doesn't allow return" });
@@ -475,11 +465,10 @@ const returnData = async (req, res) => {
       },
       { new: true }
     );
-
-    return res.status(200).json({ message: "Order returned successfully" });
+    return res.status(200).json({ success: true, message: "Order returned successfully" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "An error occurred while returning the order" });
+    return res.status(500).json({success:false , error: "An error occurred while returning the order" });
   }
 };
 
@@ -487,7 +476,6 @@ const returnData = async (req, res) => {
 const applyCoupon = async (req, res) => {
   try {
     const { couponCode } = req.body;
-    console.log(couponCode, "gjghfh");
     const userId = req.session.user_id;
     const coupon = await Coupon.findOne({ code: couponCode });
 

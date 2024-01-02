@@ -61,7 +61,7 @@ const verifyLogin = async (req, res) => {
     try {
       const id = req.query.id;
       const userData = await User.findById(id);
-  
+  console.log(id,"u",typeof id);
       if (!userData) {
         return res.status(404).json({ message: 'User not found' });
       }

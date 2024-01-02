@@ -250,7 +250,7 @@ const verifyLogin = async (req, res) => {
 
     if (userData) {
       const passwordMatch = await bcrypt.compare(password, userData.password);
-      if (passwordMatch && userData.is_admin == 0) {
+      if (passwordMatch && userData.is_admin == 0 && userData.is_blocked==0) {
         if ((req.session.user_id = userData._id)) {
           res.redirect("/home");
         }

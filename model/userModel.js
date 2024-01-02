@@ -29,10 +29,11 @@ const userSchema= new mongoose.Schema({
         type:Number,
         required:true
     },
-    is_varified:{
+    is_blocked:{
         type:Number,
         default:0
     },
+    
     referralCode: {
         type: String,
         unique: true,

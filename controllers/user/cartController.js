@@ -144,7 +144,7 @@ const updateCartCount = async (req, res) => {
         const quantityDifference = newQuantity - existingCartItem.quantity;
 
         // Check if the new quantity exceeds available stock
-        if (product.stock < newQuantity) {
+        if (product.stock <= newQuantity) {
           return res.status(400).json({ success: false, error: "Insufficient stock" });
         }
 
