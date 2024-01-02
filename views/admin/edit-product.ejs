@@ -1,0 +1,123 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Editing: <%= product.name %>
+                    </h1>
+                </div>
+                <form action="/admin/editProduct" method="post" enctype="multipart/form-data" id="product-form"
+                    onsubmit="return validateProductForm()">
+                    <section class="content-main">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Basic</h4>
+                                    </div>
+                                    <input name="product_id" type="hidden" value="<%= product._id %>">
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Product name</label>
+                                            <input type="text" name="name" placeholder="Type here"
+                                                value="<%= product.name %>" class="form-control" id="product_title">
+                                            <div class="error-message" style="color: red;" id="product_title-error">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product_category" class="form-label">Product category</label>
+                                            <select name="category">
+                                                <% category.forEach((cat)=> {
+                                                    if(cat.is_listed) { %>
+                                                    <option value="<%= cat._id %>">
+                                                        <%= cat.name %>
+                                                    </option>
+                                                    <% } }); %>
+                                            </select>
+                                            <div class="error-message" style="color: red;" id="product_title-error">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product_price" class="form-label">Price</label>
+                                            <input type="text" name="price" placeholder="Type here"
+                                                value="<%= product.price %>" class="form-control" id="product_price">
+                                            <div class="error-message" style="color: red;" id="product_price-error">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product_quantity" class="form-label">Stock</label>
+                                            <input type="text" name="stock" value="<%= product.stock%>"
+                                                placeholder="Type here" class="form-control" id="product_quantity">
+                                            <div class="error-message" style="color: red;" id="product_quantity-error">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea name="description" id="description" placeholder="Type here"
+                                                class="form-control" rows="4"><%= product.description %></textarea>
+                                            <div class="error-message" style="color: red;" id="description-error"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- card end// -->
+
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Picture</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="input-upload">
+                                            <div
+                                                style="display: flex; margin-bottom: 20px; justify-content: center; align-items: center;">
+                                                <img src="/assets/images/Products/<%= product.image %>" alt="..." id="previewImage"
+                                                    style="width: 100px; height: 100px;" >
+                                            </div>
+                                            <input class="form-control" type="file" name="image" id="category_image" onchange="validateCategoryImage(this)">
+                                        </div>
+                                    </div>
+                                </div> <!-- card end// -->
+                                <div>
+                                    <input type="submit" value="submit"
+                                        class="btn btn-primary btn-md rounded font-sm hover-up">
+                                </div>
+                            </div>
+                        </div>
+                    </section> <!-- content-main end// -->
+                </form>
+                <div style="position: relative; width: 100%;" class="justify-content-center text-center">
+                    <% if (typeof errorMessage !=='undefined' ) { %>
+                        <p
+                            style="position: absolute; transform: translate(-50%, -50%); left: 50%; color: crimson; white-space: nowrap;">
+                            <%= errorMessage %>
+                        </p>
+                        <% } %>
+                </div>
+            </div>
+        </main>
+        <script>
+            document.getElementById('fileUpload').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('previewImage').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function validateCategoryImage(input) {
+            const file = input.files[0];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp','image/webp']; // Add more if needed
+
+            if (!file || !validImageTypes.includes(file.type)) {
+                input.value = ''; // Reset the input value to clear the invalid file
+                alert('Please select a valid image file (JPEG, PNG, GIF, BMP)');
+            }
+        }
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>

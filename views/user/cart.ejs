@@ -1,0 +1,246 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+
+    <main class="main">
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div id="toast-container" class="toast-top-right">
+                        <!-- Toasts will be inserted here -->
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table shopping-summery text-center clean">
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Discounted Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        <th scope="col">Remove</th>
+                                    </tr>
+                                </thead>
+                                <!-- Iterate through cart items to display each item dynamically -->
+                                <tbody>
+                                    <% cart.forEach(item=> { %>
+                                        <tr>
+                                            <td class="image product-thumbnail">
+                                                <!-- Use item image (if available) -->
+                                                <img src="/assets/images/Products/<%= item.product.image[0] %>"
+                                                    alt="product_image">
+                                            </td>
+                                            <td class="product-des product-name">
+                                                <h5 class="product-name"><a
+                                                        href="/singleProduct/<%= item.product._id %>">
+                                                        <%= item.product.name %>
+                                                    </a></h5>
+                                            </td>
+                                            <!-- Include item price, discounted price, and other details -->
+                                            <td class="price" data-title="Price"><span>
+                                                    ₹ <%= item.product.price %>
+                                                </span></td>
+                                            <td class="discount_price" data-title="discountedPrice"><span>
+                                                    ₹ <%= item.product.offerPrice %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center" data-title="Stock">
+                                                <div class="cart-product-quantity">
+                                                    <input type="number" class="form-control text-center" name="qty"
+                                                        value="<%= item.quantity %>" min="1" max="10" step="1"
+                                                        data-decimals="0" required
+                                                        onchange="updateCart('<%= item.product._id %>', this)">
+                                                </div>
+                                            </td>
+                                            <!-- Calculate and display subtotal dynamically -->
+                                            <td class="text-right" data-title="Cart">
+                                                <p class="subtotal">
+                                                    ₹ <%= item.quantity * item.product.offerPrice %>
+                                                </p>
+                                            </td>
+                                            <!-- Add remove link for each item -->
+                                            <td class="action" data-title="Remove">
+                                                <a href="#" class="text-muted remove-item"
+                                                    data-product-id="<%= item.product._id %>">
+                                                    <i class="fi-rs-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="cart-action text-end me-5">
+                            <a href="/shop" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                        </div>
+                        <% if (isCartEmpty) { %>
+                            <div class="alert alert-warning text-center mt-25" role="alert">
+                                Your cart is empty!
+                            </div>
+                            <% } %>
+                                <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                                <div class="row mb-50 justify-content-end">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="border p-md-4 p-30 border-radius cart-totals ">
+                                            <div class="heading_s1 mb-3">
+                                                <h4>Cart Totals</h4>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="cart_total_label">Cart Subtotal</td>
+                                                            <td class="cart_total_amount1"><span
+                                                                    class=" cart_total_amount font-lg fw-900 text-brand">₹
+                                                                    <%=subtotalWithShipping %>
+                                                                </span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="cart_total_label">Shipping</td>
+                                                            <td class="cart_shipping"> <i class="ti-gift mr-5"></i>
+                                                                Free
+                                                                Shipping</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="cart_total_label">Total</td>
+                                                            <td class="cart_total_amount1"><strong><span
+                                                                        class="cart_total_amount font-xl fw-900 text-brand">₹
+                                                                        <%=subtotalWithShipping %>
+                                                                    </span></strong>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <a href="/checkout" class="btn" id="checkoutBtn"> <i
+                                                        class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HTML -->
+        <!-- Make sure to include jQuery and Toastr -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <!-- Your existing cart table -->
+        <!-- ... -->
+
+        <script>
+
+            $(document).ready(function () {
+                // Event listener for the remove link
+                $('.remove-item').on('click', function (e) {
+                    e.preventDefault();
+                    const deleteUrl = $(this).attr('href');
+                    const productName = $(this).closest('tr').find('.product-name a').text().trim();
+                    const currentItem = $(this).closest('tr');
+
+                    // Display SweetAlert confirmation dialog
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `You want to delete ${productName} from the cart!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true // Reverses the button positions
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // If confirmed, proceed with the delete action
+                            $.ajax({
+                                url: '/remove?productId=' + $(this).data('product-id'),
+                                method: 'GET',
+                                success: function (response) {
+                                    // Remove the item row from the table on successful deletion
+                                    currentItem.remove();
+
+                                    // Display success SweetAlert
+                                    Swal.fire({
+                                        title: 'Item Deleted',
+                                        text: `${productName} has been removed from the cart.`,
+                                        icon: 'success',
+                                        timer: 1300,
+                                        timerProgressBar: true,
+                                        showConfirmButton: false
+                                    });
+                                },
+                                error: function (err) {
+                                    console.error('Error removing item:', err);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+
+        </script>
+
+        <script>
+
+            let btn_checkout = document.getElementById('checkoutBtn');
+            btn_checkout.addEventListener('click', function () {
+
+                if (isCartEmpty) {
+
+                    event.preventDefault(); // Prevent the default action of the link
+                    alert('Your cart is empty!');
+                }
+
+            });
+
+        </script>
+
+        <script>
+
+            function updateCart(productId, inputElement) {
+                const newQuantity = inputElement.value;
+
+                // Get the maximum allowed quantity (current stock)
+                const maxQuantity = parseInt(inputElement.getAttribute('max'));
+
+                // Check if the new quantity exceeds the available stock
+                if (newQuantity > maxQuantity) {
+                    // Display an alert or handle the situation as needed
+                    alert('Exceeds available stock!');
+                    // Reset the input to the maximum allowed quantity
+                    inputElement.value = maxQuantity;
+                    return;
+                }
+
+                $.ajax({
+                    url: '/editCart',
+                    method: 'POST',
+                    data: { productId, newQuantity },
+                    success: function (response) {
+                        
+                        const updatedSubtotal = response.updatedSubtotal;
+                        const updatedTotal = response.updatedTotal;
+
+                        // Update the UI to reflect changes
+                        $(inputElement).closest('td').siblings().find('.subtotal').text(updatedSubtotal);
+
+                        // Update total in cart totals section if needed
+                        $('.cart_total_amount').text(updatedTotal);
+                        $(inputElement).closest('td').siblings().find('.cart_total_amount').text(updatedTotal);
+                    },
+                    error: function (err) {
+                        console.error('Error updating quantity:', err);
+                    }
+                });
+            }
+
+
+        </script>
+    </main>
+
+    <%- include('../layouts/userFooter.ejs') %>

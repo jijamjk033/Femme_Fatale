@@ -1,0 +1,230 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 m- d-flex justify-content-between container-fluid">
+                    <h1 class="mt-5 mb-2">Order Details</h1>
+                </div>
+                <% const deliveryDate=new Date(order.deliveryDate); const returnDate=new Date(deliveryDate.getTime());
+                    returnDate.setDate(returnDate.getDate() + 10); const currentDate=new Date(); const
+                    isReturnDisabled=(currentDate>= returnDate);
+
+                    const deliveryYear = deliveryDate.getFullYear();
+                    const deliveryMonth = deliveryDate.getMonth() + 1;
+                    const deliveryDay = deliveryDate.getDate();
+                    const formattedDeliveryDate = `${deliveryDay < 10 ? '0' : '' }${deliveryDay}-${deliveryMonth < 10
+                        ? '0' : '' }${deliveryMonth}-${deliveryYear}`; const returnYear=returnDate.getFullYear(); const
+                        returnMonth=returnDate.getMonth() + 1; const returnDay=returnDate.getDate(); const
+                        formattedReturnDate=`${returnDay < 10 ? '0' : '' }${returnDay}-${returnMonth < 10 ? '0' : ''
+                        }${returnMonth}-${returnYear}`; %>
+
+                        <div class="row mb-3 mt-4 order-info-wrap">
+                            <div class="col-md-4">
+                                <article class="icontext align-items-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-person"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Order Info</h6>
+                                        <p class="mb-1">
+                                            Order ID: <%=order._id %> <br>
+                                                Order date: <%= new Date(order.orderDate).toLocaleDateString() %><br>
+                                                    Delivery date: <%=formattedDeliveryDate%> <br>
+                                                        Return available till: <%=formattedReturnDate %>
+                                        </p>
+
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="col-md-4">
+                                <article class="icontext align-items-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-local_shipping"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Customer</h6>
+                                        <p class="mb-1">
+                                            <%=order.user.name %> <br>
+                                                <%=order.user.mobile %><br>
+                                        </p>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="col-md-4">
+                                <article class="icontext align-items-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-place"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Deliver to</h6>
+                                        <p class="mb-1">
+                                            City: <%=order.address.city %>, <%=order.address.street %> <br>
+                                                    <%=order.address.houseName %> <br>
+                                                        <%=order.address.pincode %>
+                                        </p>
+
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card-body ">
+                                <table class="text-center" id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <div style="height: 7vh;" class="card-header mt-0">
+                                                <i class="fas fa-table me-1"></i>
+                                                Table
+                                            </div>
+                                        </tr>
+                                        <tr>
+                                            <th width="30%">Product</th>
+                                            <th width="10%">Unit Price</th>
+                                            <th width="10%">Quantity</th>
+                                            <th width="10%" class="text-end">Total</th>
+                                            <th width="15%" class="text-end">status</th>
+                                            <th width="15%" class="text-end">Payment</th>
+                                            <th width="15%" class="text-end"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <% let subtotal=0; order.items.forEach(function(item) { let
+                                            total=item.product. offerPrice?item.product. offerPrice *
+                                            item.quantity:item.product.price * item.quantity;
+                                            subtotal=order.totalAmount; %>
+                                            <tr>
+                                                <td>
+                                                    <div class="left">
+                                                        <img src="/assets/images/Products/<%=item.product.image[0]%>"
+                                                            width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info">
+                                                        <%=item.product.name %>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    ₹<%if(item.product.discountPrice ){ %><span>
+                                                            <%=item.product.discountPrice %>
+                                                        </span>
+                                                        <% }else{ %><span>
+                                                                <%=item.product.price %>
+                                                            </span>
+                                                            <% } %>
+                                                </td>
+                                                <td>
+                                                    <%=item.quantity %>
+                                                </td>
+                                                <td class="text-end">
+                                                    ₹<%= total %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <%= item.status %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <%= item.paymentMethod %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <% if (item.status!="Cancelled" ) { %>
+                                                        <li style="list-style-type:none;"
+                                                            class="dropdown nav-item me-4">
+                                                            <div class="btn-group align-items-center">
+                                                                <button type="button"
+                                                                    class="btn btn-outline-dark dropdown-toggle"
+                                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Select Status
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end"
+                                                                    aria-labelledby="dropdownAccount">
+                                                                    <li><button class="dropdown-item"
+                                                                            onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Confirmed')">Confirmed</button>
+                                                                    </li>
+                                                                    <li><button class="dropdown-item"
+                                                                            onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Shipped')">Shipped</button>
+                                                                    </li>
+                                                                    <li><button class="dropdown-item"
+                                                                            onclick="changeStatus('<%= order._id %>', '<%= item.product._id %>', 'Delivered')">Delivered</button>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </li>
+
+                                                        <% }%>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="4">
+                                                        <article class="">
+                                                            <dl class="dlist">
+                                                                <dt>Subtotal: ₹<%= subtotal %>
+                                                                </dt>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt>Shipping cost: ₹0.00</dt>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt>Grand total: <b class="h5">₹<%= subtotal %></b></dt>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt class="text-muted">Status:
+                                                                    <span
+                                                                        class="badge rounded-pill alert-success text-success">Payment
+                                                                        done</span>
+                                                                </dt>
+                                                            </dl>
+                                                        </article>
+                                                    </td>
+                                                </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            </div>
+        </main>
+        <script>
+            $(document).ready(function () {
+                // Initialize DataTable with specific column sorting
+                $('#datatablesSimple').DataTable({
+                    "columnDefs": [
+                        { "orderable": false, "targets": 3 } // Disable sorting for the fourth column (index 3)
+                    ]
+                });
+            });
+
+            function changeStatus(id, productId, status) {
+                const requestData = {
+
+                    status,
+                    productId
+                };
+                fetch(`/admin/orderStatusChange?id=${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.message) {
+                            location.reload();
+                        } else {
+                            alert('Error occurred while placing order');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred while placing order');
+                    });
+            }
+        </script>
+        <%- include('../layouts/footeradmin.ejs') %>

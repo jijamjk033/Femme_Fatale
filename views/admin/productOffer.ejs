@@ -1,0 +1,103 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Products</h1>
+                </div>
+                <div class="row ">
+                    <% product.forEach(products=>{ %>
+                        <div class="col-md-3 ">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Offer</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-upload text-center">
+                                        <img style="height: 27vh; width: 20 vh;"
+                                            src="/assets/images/Products/<%=products.image[0]%>" alt="">
+                                        <form action="/admin/updateOffer" method="post">
+                                            <p>
+                                                <%= products.name%>
+                                            </p>
+                                            <p>
+                                                <%= products.salePrice %>
+                                            </p>
+
+                                            <h6><label for="offer">Apply Product offer</label></h6>
+                                            <input class="form-control text-center" name="offerPrice" type="text"
+                                                value="<%= products.offerPrice %>">
+                                            <input class="form-control" name="id" type="hidden"
+                                                value="<%= products._id %>">
+                                            <button class="btn btn-sm btn-light rounded mt-2"
+                                                style="color: rgb(255, 255, 255); background-color: rgb(70, 149, 122);"
+                                                type="submit">save</button>
+                                        </form>
+                                        <!-- Add this after the form in your EJS template -->
+                                        <div class="alert alert-danger mt-3" id="error-message" style="display:none;">
+                                            <strong>Error!</strong> Product offer should not increase by 100 or more.
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div> <!-- card end// -->
+
+                        </div>
+
+                        <%}) %>
+                            <!-- pagination -->
+
+                            <!-- pagination ends -->
+                </div>
+            </div>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("searchInput");
+                const table = document.getElementById("products");
+                const rows = table.getElementsByTagName("tr");
+
+                searchInput.addEventListener("keyup", function () {
+                    const searchText = searchInput.value.toLowerCase();
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const rowData = rows[i].textContent.toLowerCase();
+                        if (rowData.includes(searchText)) {
+                            rows[i].style.display = "";
+                        } else {
+                            rows[i].style.display = "none";
+                        }
+                    }
+                });
+            });
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const forms = document.querySelectorAll("form");
+
+                forms.forEach(function (form) {
+                    form.addEventListener("submit", function (event) {
+                        const offerInput = form.querySelector("[name='offerPrice']");
+                        const errorMessage = form.closest(".card-body").querySelector("#error-message");
+
+                        // Validate offerPrice using regex
+                        const offerPriceRegex = /^\d{1,2}(\.\d{1,2})?$/;
+                        const offerPrice = parseFloat(offerInput.value);
+
+                        if (!offerPriceRegex.test(offerInput.value) || offerPrice > 100) {
+                            errorMessage.style.display = "block";
+                            event.preventDefault(); // Prevent form submission
+                        } else {
+                            errorMessage.style.display = "none";
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>

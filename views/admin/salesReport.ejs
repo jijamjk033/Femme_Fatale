@@ -1,0 +1,305 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Sales report</h1>
+                </div>
+                <div class="row ">
+                    <div class="mb-5 d-flex justify-content-between">
+                        <div>
+                            <div class="col-md-12 text-right">
+                                <button id="pdfButton" class="btn btn-outline-dark print ms-2"><i
+                                        class="icon material-icons md-print"></i> Pdf </button>
+                                <button class="btn btn-outline-dark print ms-2" onclick="export_data()"><i
+                                        class="icon material-icons md-print"></i> Excel </button>
+
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Timespan
+                            </button>
+                            <ul class="dropdown-menu">
+                                <a href="/admin/salesReport?status=All" class="dropdown-item">All</a>
+                                <a href="/admin/salesReport?status=Daily" class="dropdown-item">Daily</a>
+                                <a href="/admin/salesReport?status=Weekly" class="dropdown-item">Weekly</a>
+                                <a href="/admin/salesReport?status=Monthly" class="dropdown-item">Monthly</a>
+                                <a href="/admin/salesReport?status=Yearly" class="dropdown-item">Yearly</a>
+                            </ul>
+
+                            <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Order Status
+                            </button>
+                            <ul class="dropdown-menu">
+                                <a href="/admin/salesReport?status=All" class="dropdown-item">All</a>
+                                <a href="/admin/salesReport?status=Delivered" class="dropdown-item"> Delivered</a>
+                                <a href="/admin/salesReport?status=Shipped" class="dropdown-item">Shipped</a>
+                                <a href="/admin/salesReport?status=Confirmed" class="dropdown-item"> Confirmed</a>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: -5vh;" class="row d-flex justify-content-around">
+                            <div class="col-md-4 me-3">
+                                <label for="category_name" class="form-label">Start Date</label>
+                                <input style="border: 1px solid #333;" type="date" name="startDate"
+                                    placeholder="Type here" class="form-control" id="startDate">
+                                <div class="error-message" style="color: red;" id="startDate-error"></div>
+                            </div>
+
+                            <div class="col-md-4 me-3">
+                                <label for="start date" class="form-label">End Date</label>
+                                <input style="border: 1px solid #333;" type="date" name="endDate"
+                                    placeholder="Type here" class="form-control" id="endDate">
+                                <div class="error-message" style="color: red;" id="endDate-error"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <button style="height: 6vh; margin-top: 32px;" class="btn btn-primary"
+                                    onclick="dateFilter()">submit
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Table
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: row;" class="justify-content-around">
+                            <p style="margin-right: 20px;">Total Revenue: ₹ <%= totalRevenue.toFixed(2) %>
+                            </p>
+                            <p style="margin-right: 20px;">Total Orders: <%= totalSales %>
+                            </p>
+                            <p>Total Products Sold: <%= totalProductsSold %>
+                            </p>
+                        </div>
+                        <hr>
+                        <!-- Display Product that is Mostly Sold -->
+
+                        <table id="datatablesSimple" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Billing Name</th>
+                                    <th scope="col">Ordered Date</th>
+                                    <th scope="col">Delivery Date</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Billing Name</th>
+                                    <th>Ordered Date</th>
+                                    <th>Delivery Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Status</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <% orders.forEach((order)=> {
+                                    order.items.forEach((item) => { %>
+                                    <tr>
+                                        <td>
+                                            <%= order.randomId %>
+                                        </td>
+                                        <td>
+                                            <%= order.user.name %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(order.orderDate).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(order.deliveryDate).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= order.totalAmount %>
+                                        </td>
+                                        <td>
+                                            <% if (item.status=='Confirmed' ) { %>
+                                                <span>
+                                                    <%= item.status %>
+                                                </span>
+                                                <% } else if (item.status=='Shipped' ) { %>
+                                                    <span>
+                                                        <%= item.status %>
+                                                    </span>
+                                                    <% } else if (item.status=='Delivered' ) { %>
+                                                        <span>
+                                                            <%= item.status %>
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span>
+                                                                <%= item.status %>
+                                                            </span>
+                                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                <%= item.paymentMethod %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <% }); }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+        <script>
+            document.getElementById("pdfButton").addEventListener("click", function () {
+                const salesContainer = document.querySelector(".card-body");
+                const pdfOptions = {
+                    filename: 'SalesReport.pdf',
+                    image: { type: 'jpeg', quality: 1.0 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                html2pdf().from(salesContainer).set(pdfOptions).save();
+            });
+        </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("searchInput");
+                const table = document.getElementById("products");
+                const rows = table.getElementsByTagName("tr");
+
+                searchInput.addEventListener("keyup", function () {
+                    const searchText = searchInput.value.toLowerCase();
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const rowData = rows[i].textContent.toLowerCase();
+                        if (rowData.includes(searchText)) {
+                            rows[i].style.display = "";
+                        } else {
+                            rows[i].style.display = "none";
+                        }
+                    }
+                });
+            });
+
+            $(document).ready(function ($) {
+                $(document).on('click', '#pdfButton', function (event) {
+                    event.preventDefault();
+                    var element = document.getElementById('products');
+                    let randomNumber = Math.floor(Math.random() * (10000000000 - 1)) + 1;
+                    var opt = {
+                        margin: 0,
+                        filename: 'SalesReport' + randomNumber + '.pdf',
+                        html2canvas: { scale: 10 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+
+                    html2pdf().set(opt).from(element).save();
+
+                });
+            });
+
+            function export_data() {
+                let data = document.getElementById('datatablesSimple'); // Assuming this is the table to export
+                let wb = XLSX.utils.table_to_book(data, { sheet: 'Sheet1' });
+                let wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+                function s2ab(s) {
+                    const buf = new ArrayBuffer(s.length);
+                    const view = new Uint8Array(buf);
+                    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+                    return buf;
+                }
+
+                let blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+                saveAs(blob, 'SalesReport.xlsx'); // This will prompt a download for the file
+            }
+
+
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+        <!-- xlsx.core.min.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.core.min.js"></script>
+
+        <script>
+
+            function validation(startDate, endDate) {
+
+                const startDate_error = document.getElementById("startDate-error")
+                const endDate_error = document.getElementById("endDate-error")
+
+                startDate_error.innerHTML = startDate.trim() === "" ? "please select start date" : ""
+                endDate_error.innerHTML = endDate.trim() === "" ? "please select end date" : ""
+
+                return (startDate_error.innerHTML || endDate_error.innerHTML)
+
+            }
+
+
+            function renderOrders(orders) {
+                const ordersTableBody = document.querySelector('#datatablesSimple');
+                ordersTableBody.innerHTML = '';
+
+                orders.forEach(order => {
+                    order.items.forEach(item => {
+                        const orderDate = new Date(order.orderDate).toLocaleDateString();
+                        const deliveryDate = order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString() : '';
+
+                        const newRow = ordersTableBody.insertRow();
+                        newRow.innerHTML = `
+        <td>${order.randomId}</td>
+        <td>${order.user.name}</td>
+        <td>${orderDate}</td>
+        <td>${deliveryDate}</td>
+        <td>${order.totalAmount}</td>
+        <td>${item.status}</td> <!-- Accessing individual item status -->
+        <td>${item.paymentMethod}</td> <!-- Accessing individual item paymentMethod -->
+      `;
+                    });
+                });
+            }
+
+            function dateFilter() {
+                const startDate = document.getElementById("startDate").value;
+                const endDate = document.getElementById("endDate").value;
+
+                fetch(`/admin/salesReport/${startDate}/${endDate}`, {
+                    method: 'GET',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            const orders = data.orders;
+                            renderOrders(orders);
+                        } else {
+                            console.error('Server error:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+            }
+
+
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>

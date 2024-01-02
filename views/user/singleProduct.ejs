@@ -1,0 +1,45 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+  <main class="main">
+    <section class="pt-80 pb-90">
+      <div class="row">
+        <div class="col-md-6 image-container d-flex justify-content-center">
+          <img src='/assets/images/Products/<%= products.image[0]%>' alt="Image" class="image-zoom">
+        </div>
+        <div class="col-md-4">
+          <h2 class="text-black">
+            <%= products.name %>
+          </h2>
+          <p class="mb-4 mt-4">
+            <%= products.description %>
+          </p>
+
+          <p><strong class="text-dark h5">₹<del>
+                <%= products.price %>
+              </del> ₹
+              <%= products.offerPrice %>
+            </strong></p>
+          <div class="mt-4 d-flex align-items-center ">
+            <form action="/cart" method="post">
+              <!-- Include product ID dynamically -->
+              <input type="hidden" value="<%= products._id %>" name="productData_id">
+              <!-- Include product quantity input -->
+              <div class="detail-extralink ">
+                <input type="number" name="qty" class="text-center me-2 custom-input" style="width: 15vh; height: 7.5vh; border: 1px solid rgb(70, 20, 49); font-size: 18px; font-weight: bold;" value="1" min="1" max="8">
+                <div class="product-extra-link2 me-2">
+                  <button type="submit" class="btn float-end btn-success btn-lg rounded font-md"><span>Add To
+                      Cart</span></button>
+                </div>
+              </div>
+            </form>
+            <button aria-label="Add To Wishlist" class="btn btn-success btn-lg rounded font-md"><i
+              class="fi-rs-heart "></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+
+  <%- include('../layouts/userFooter.ejs') %>

@@ -1,0 +1,202 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Users List</h1>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Table
+                    </div>
+                    <div class="card-body">
+                        <table id="datatablesSimple" class="table text-center">
+                            <thead>
+                                <tr>
+                                    <!-- <th scope="col"></th> -->
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Status</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (users.length> 0) {
+                                    users.forEach(user => {
+                                    %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="ms-3">
+                                                    <p class="fw-bold mb-1">
+                                                        <%= user.name %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                <%= user.email %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                <%= user.mobile %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (user.is_blocked == 1) { %>
+                                                <a onclick="Unlistandlist('<%= user._id %>', 'unlist')"
+                                                    class="btn btn-sm font-sm rounded btn-brand">
+                                                    <i class="material-icons md-edit"></i> Unblock
+                                                </a>
+                                            <% } else { %>
+                                                <a onclick="Unlistandlist('<%= user._id %>', 'list')"
+                                                    class="btn btn-sm font-sm rounded btn-success">
+                                                    <i class="material-icons md-edit"></i> Block
+                                                </a>
+                                            <% } %>
+                                        </td>
+                                        
+
+                                    </tr>
+                                    <% }); } else { %>
+                                        <tr>
+                                            <td colspan="6">
+                                                <p>User not found</p>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("searchInput");
+                const table = document.getElementById("products");
+                const rows = table.getElementsByTagName("tr");
+
+                searchInput.addEventListener("keyup", function () {
+                    const searchText = searchInput.value.toLowerCase();
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const rowData = rows[i].textContent.toLowerCase();
+                        if (rowData.includes(searchText)) {
+                            rows[i].style.display = "";
+                        } else {
+                            rows[i].style.display = "none";
+                        }
+                    }
+                });
+            });
+
+
+            function ProductUnlist(productId) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Please confirm to block this product!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the deletion via AJAX/fetch to the server
+                        fetch(`/admin/userblock?id=${productId}`, {
+                            method: 'GET',
+                            // Add other necessary headers or configurations
+                        }).then(response => {
+                            if (response.ok) {
+                                // Product successfully deleted
+                                Swal.fire({
+                                    title: "success",
+                                    text: "Please confirm to unblock this product!",
+                                    icon: "success",
+                                    timer: 2000,
+                                    timeProgressBar: true,
+                                    showConfirmButton: false,
+
+
+                                })
+                                    .then(() => {
+                                        // Redirect after displaying the success message
+                                        window.location.href = '/admin/userData'; // Redirect to a suitable page
+                                    });
+                            } else {
+                                Swal.fire("Error!", "Failed to delete product", "error");
+                            }
+                        }).catch(error => {
+                            Swal.fire("Error!", "Failed to delete product", "error");
+                        });
+                    }
+                });
+            }
+
+            
+        function Unlistandlist(userId, action) {
+                let titleText, confirmText, successText, url;
+                
+                if (action === 'list') {
+                    titleText = "Are you sure?";
+                    confirmText = "Please confirm to unblock this user!";
+                    successText = "User has been unblocked";
+                    buttonText = "Yes!"
+                } else if (action === 'unlist') {
+                    titleText = "Are you sure?";
+                    confirmText = "Please confirm to block this user!";
+                    successText = "User has been blocked";
+                    buttonText = "Yes!"
+                }
+
+                Swal.fire({
+                    title: titleText,
+                    text: confirmText,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: buttonText,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the listing or unlisting via AJAX/fetch to the server
+                        fetch(`/admin//userblock?id=${productId}`, {
+                            method: 'GET',
+                            // Add other necessary headers or configurations
+                        }).then(response => {
+                            if (response.ok) {
+                                // Success message
+                                Swal.fire({
+                                    title: "Success",
+                                    text: successText,
+                                    icon: "success",
+                                    timer: 2000,
+                                    timeProgressBar: true,
+                                    showConfirmButton: false,
+                                }).then(() => {
+                                    // Redirect after displaying the success message
+                                    window.location.reload(); // Redirect to a suitable page
+                                });
+                            } else {
+                                Swal.fire("Error!", "Failed to perform the action", "error");
+                            }
+                        }).catch(error => {
+                            Swal.fire("Error!", "Failed to perform the action", "error");
+                        });
+                    }
+                });
+            }
+
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>

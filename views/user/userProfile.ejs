@@ -1,0 +1,273 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+  <main class="main">
+    <section class="pt-80 pb-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 m-auto">
+            <div class="row">
+              <%- include('../layouts/userSidebar.ejs') %>
+
+                <div class="col-md-8">
+                  <div class="card">
+                    <section class="content-body p-xl-4">
+                      <div class="row">
+                        <div class="col-lg-8">
+                          <form action="/profile" enctype="multipart/form-data" method="post"
+                            onsubmit="return validationChecking()">
+                            <div class="row">
+
+                              <div class="row gx-3">
+                                <input type="hidden" name="user_id" value="<%=userData._id%>">
+                                <div class="col-12  mb-3">
+                                  <label class="form-label">Name</label>
+                                  <input class="form-control" name="name" value="<%=userData.name%>" id="user_name"
+                                    type="text" placeholder="Type here">
+                                  <div id="errorName" class="ms-2 text-danger"></div>
+                                </div>
+
+                                <div class="col-lg-12  mb-3">
+                                  <label class="form-label">Email</label>
+                                  <input class="form-control" type="email" name="email" value="<%=userData.email%>"
+                                    id="user_email" placeholder="example@mail.com" disabled>
+                                  <div id="errorMail" class="ms-2 text-danger"></div>
+                                </div>
+                                <div class="col-lg-12  mb-3">
+                                  <label class="form-label">Phone</label>
+                                  <input class="form-control" type="tel" name="mobile" value="<%=userData.mobile%>"
+                                    id="user_phone" placeholder="+1234567890">
+                                  <div id="errorMobile" class="ms-2 text-danger"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <br>
+                            <button class="btn btn-primary" type="submit">Save changes</button>
+                          </form>
+                        </div>
+                        <div class="col-lg-4">
+                          <form enctype="multipart/form-data" id="imageForm">
+                            <div class="input-upload mb-3">
+                              <% if (userData.image) { %>
+                                <img src="assets/images/users/<%=userData.image %>" alt="" id="imgView1"
+                                  style="width: 300px;">
+                                <% } else { %>
+                                  <img src="/uploadimage.svg" alt="" id="imgView1" style="width: 300px;">
+                                  <% } %>
+                                    <input style="display: none;" class="form-data" type="file" name="image" id="input1"
+                                      accept="image/png, image/jpeg, image/jpg">
+                                    <label for="input1" class="btn btn-primary rounded font-md"
+                                      style="cursor: pointer; margin-top: 10px;">
+                                      <i class="fa-solid fa-upload"></i> Upload
+                                      Image
+                                    </label>
+                            </div>
+                            <div class="image-cropper mb-3" style="display:none; width: 300px;">
+                              <img src="" id="croppedImg1" alt="">
+                              <button type="button" id="saveButton1" class="btn btn-primary">Save</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="col-md d-flex justify-content-end">
+                          <article class="box m-3 bg-light d-flex">
+                            <h5>Referral Code: <%= userData.referralCode %>
+                            </h5>
+                          </article>
+                        </div>
+                        <div class="col-md d-flex justify-content-end">
+                          <article class="box m-3 bg-light d-flex">
+                            <% if(userData.referralCode) { %> <br>
+                              <h5>Referral Link: <%= userData.referralLink %>
+                              </h5>
+                              <% } %>
+                          </article>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.js"></script>
+
+  <script>
+    document.getElementById('input1').addEventListener('change', function (event) {
+      let input = event.target;
+      let reader = new FileReader();
+
+      reader.onload = function () {
+        let dataURL = reader.result;
+        let image = document.getElementById('imgView1');
+        image.src = dataURL;
+
+        // Initialize Cropper.js on the image
+        let cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 1,
+          guides: true,
+          background: false,
+          autoCropArea: 1,
+          zoomable: true
+        });
+
+        // Show the image cropper container
+        let cropperContainer = document.querySelector('.image-cropper');
+        cropperContainer.style.display = 'block';
+
+        // Update the cropped image when the "Save" button is clicked
+        let saveButton = document.getElementById('saveButton1');
+        saveButton.addEventListener('click', function () {
+          // Get the cropped canvas data
+          const canvas = cropper.getCroppedCanvas();
+
+          if (!canvas) {
+            return;
+          }
+
+          // Convert the canvas to a Blob (in this case, to a JPEG file with quality 1.0)
+          canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append('croppedImage', blob, 'cropped-image.jpg');
+
+            // Append any other necessary data to the form (if needed)
+            // formData.append('otherField', otherValue);
+
+            // Submit the form data to the backend using Fetch API or XMLHttpRequest
+            fetch('/updateProfilePic', {
+              method: 'POST',
+              body: formData
+            })
+              .then(response => {
+                if (response.ok) {
+                  console.log('Cropped image submitted successfully!');
+                  window.location.reload();
+                } else {
+                  console.error('Failed to submit cropped image.');
+                  // Optionally, handle failed submission
+                }
+              })
+              .catch(error => {
+                console.error('Error submitting cropped image:', error);
+              });
+          }, 'image/jpeg'); // Set the desired image format here
+        });
+      };
+      reader.readAsDataURL(input.files[0]);
+    });
+  </script>
+  <script>
+
+    // Image preview
+    document.getElementById('fileUpload').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('previewImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const user_name = document.getElementById("user_name");
+      const errorName = document.getElementById("errorName");
+      const user_phone = document.getElementById("user_phone");
+      const errorMobile = document.getElementById("errorMobile");
+      const fileUpload = document.getElementById("fileUpload");
+      const errorfileUpload = document.getElementById("errorfileUpload");
+      const password = document.getElementById("password");
+      const errorpassword = document.getElementById("errorpassword");
+      const cpassword = document.getElementById("cpassword");
+      const errorcpassword = document.getElementById("errorcpassword");
+
+
+      user_name.addEventListener('input', function () {
+        errorName.innerHTML = user_name.value.trim() === "" ? "Please enter user name" : /^[a-zA-Z ]+$/.test(user_name.value) == false ? "Please enter alphabets only" : "";
+      });
+
+      user_phone.addEventListener('input', function () {
+        errorMobile.innerHTML = user_phone.value.trim() === "" ? "Please enter user phone number" : /^\d{10}$/.test(user_phone.value) == false ? "Please enter valid phone number" : "";
+      });
+
+      password.addEventListener('input', function () {
+        errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+      });
+      cpassword.addEventListener('input', function () {
+        errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+      });
+
+
+    });
+    function validationChecking(event) {
+      const user_name = document.getElementById("user_name");
+      const errorName = document.getElementById("errorName");
+      const user_phone = document.getElementById("user_phone");
+      const errorMobile = document.getElementById("errorMobile");
+      const fileUpload = document.getElementById("fileUpload");
+      const errorfileUpload = document.getElementById("errorfileUpload");
+
+      errorName.innerHTML =
+        user_name.value.trim() === ""
+          ? "Please enter user name"
+          : /^[a-zA-Z ]+$/.test(user_name.value) == false
+            ? "Please enter alphabets only"
+            : "";
+      errorMobile.innerHTML =
+        user_phone.value.trim() === ""
+          ? "Please enter user phone number"
+          : /^\d{10}$/.test(user_phone.value) == false
+            ? "Please enter valid phone number"
+            : "";
+
+      const uploadedFile = fileUpload.files[0];
+      const existingImage = document.getElementById("previewImage");
+      const defaultImageSrc = existingImage.getAttribute("src");
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "image/webp",
+
+      ];
+
+      if (uploadedFile) {
+        if (!allowedTypes.includes(uploadedFile.type)) {
+          errorfileUpload.innerHTML = "Please upload a valid image file (JPEG, PNG, GIF)";
+
+          return false;
+        }
+      } else {
+        // If no new file is selected, maintain the existing image
+        existingImage.setAttribute("src", defaultImageSrc);
+      }
+
+      if (errorName.innerHTML || errorMobile.innerHTML) return false;
+
+      return true;
+    }
+
+    function validationPasswordChecking(event) {
+      const password = document.getElementById("password");
+      const errorpassword = document.getElementById("errorpassword");
+      const cpassword = document.getElementById("cpassword");
+      const errorcpassword = document.getElementById("errorcpassword");
+      errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+      errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+
+      if (errorpassword.innerHTML || errorcpassword.innerHTML) return false;
+
+      return true;
+    }
+  </script>
+
+
+
+  <%- include('../layouts/userFooter.ejs') %>

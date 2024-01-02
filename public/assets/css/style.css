@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,500&display=swap');
+body{
+    font-family: 'Open Sans', sans-serif;
+   
+}
+#logo_ff{
+    max-width: 70% !important;
+}
+
+.container-otp{
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 80vh;
+     
+}

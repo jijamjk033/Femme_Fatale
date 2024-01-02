@@ -1,0 +1,106 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Coupon</h1>
+                    <div class="d-flex align-items-center">
+                        <a href="/admin/addCoupon" class="rounded-3 btn btn-primary">
+                            <i class="fa-solid fa-plus"></i> Add new coupon
+                        </a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Table
+                    </div>
+                    <div class="card-body text-center">
+                        <table id="datatablesSimple">
+                            <thead>
+                                <tr>
+                                    <th class="align-middle" scope="col">Coupon Code</th>
+                                    <th class="align-middle" scope="col">Discount</th>
+                                    <th class="align-middle" scope="col">Created Date</th>
+                                    <th class="align-middle" scope="col">Expiry Date</th>
+                                    <th class="align-middle" scope="col">Limit</th>
+                                    <th class="align-middle" scope="col">Minimum Cart Amount</th>
+                                    <th class="align-middle" scope="col">Redeemable Amount</th>
+                                    <th class="align-middle" scope="col">Status</th>
+                                    <th class="align-middle" scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <% coupon.forEach((coupon)=> { %>
+                                    <tr style="height: 80px;">
+                                        <td>
+                                            <%= coupon.code %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.discount %>%
+                                        </td>
+                                        <td>
+                                            <%= new Date(coupon.createdDate).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(coupon.expiry).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.limit %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.minAmt %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.maxAmt %>
+                                        </td>
+                                        <td>
+                                            <% if (coupon.is_listed==true) { %>
+                                                <div class="col-lg-2 col-sm-2 col-4 col-status">
+                                                    <span class="badge rounded-pill alert-success text-dark">listed</span>
+                                                </div>
+                                            <% } else { %>
+                                                <div class="col-lg-2 col-sm-2 col-4 col-status">
+                                                    <span class="badge rounded-pill alert-danger text-dark">unlisted</span>
+                                                </div>
+                                            <% } %>
+                                        </td>
+                                        <td> 
+                                            <!-- <a href="/admin/couponDetails?couponId=<%= coupon._id %>"
+                                                class="btn btn-secondary">Details</a> -->
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light border border-dashed border-dark rounded btn-sm font-xs">
+                                                    <i class="material-icons md-more_horiz"></i>
+                                                </a>
+                                                <div class="dropdown-menu" >
+                                                    <a class="dropdown-item "
+                                                        href="/admin/editCoupon?couponId=<%= coupon._id %>">
+                                                        <p class="ms font-xs text-center text-dark">Edit</p>
+                                                    </a>
+                                                    <% if (coupon.is_listed) { %>
+                                                        <a
+                                                            href="/admin/unlistCoupon?couponId=<%= coupon._id.toString() %>" style="text-decoration: none;">
+                                                            <p class="ms font-xs text-center text-dark">Unlist</p>
+                                                        </a>
+                                                    <% } else { %>
+                                                        <a
+                                                            href="/admin/unlistCoupon?couponId=<%= coupon._id.toString() %>" style="text-decoration: none;">
+                                                            <p class="text-dark ms font-xs text-center">List</p>
+                                                        </a>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% } )%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include('../layouts/footeradmin.ejs') %>

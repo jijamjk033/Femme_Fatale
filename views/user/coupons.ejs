@@ -1,0 +1,234 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+    <main class="main">
+        <section class="pt-80 pb-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <%- include('../layouts/userSidebar.ejs') %>
+                            
+                            <div class="col-md-8  d-flex justify-content-around ">
+                                <div class="tab-content">
+                                    <div id="tab-account" aria-labelledby="tab-account-link">
+                                        <div class="row">
+                                            <% if (coupon.length> 0) { for (let i = 0; i < coupon.length; i++) { %>
+                                                    <div class="col-lg-6 mb-3">
+                                                        <div
+                                                            class="d-flex justify-content-center couponContainer container">
+                                                            <div class="d-flex couponCard card text-center">
+                                                                <div class="image"><img
+                                                                        src="https://i.imgur.com/DC94rZe.png"
+                                                                        width="150"></div>
+                                                                <div class="image2"><img
+                                                                        src="https://i.imgur.com/DC94rZe.png"
+                                                                        width="150"></div>
+                                                                <h1>
+                                                                    <% if(coupon[i].type=='percentage' ) { %>
+                                                                        <%= coupon[i].discount %>% <% }else{ %> <%=
+                                                                                    coupon[i].discount %>%
+                                                                                    <%}%>
+                                                                </h1><span class="d-block">Discount</span>
+                                                                <span class="d-block text-muted"
+                                                                    style="font-size: medium;">Expires at:- <br>
+                                                                    <%= new Date(coupon[i].expiry).toLocaleDateString()
+                                                                        %>
+                                                                </span>
+                                                                <% if (coupon[i].usersUsed.includes(userData._id)) { %>
+                                                                    <p>Coupon Redeemed</p>
+                                                                    <% } else { %>
+                                                                        <div class="mt-4"><small>With Code : <%=
+                                                                                    coupon[i].code %></small></div>
+                                                                        <a class="copy-coupon-btn btn btn-outline-2 "
+                                                                            data-coupon="<%= coupon[i].code %>">
+
+                                                                            <span class="" style="font-size: medium;"><i
+                                                                                    class="fas fa-copy"></i> Copy</span>
+                                                                        </a>
+                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+                                                        <!-- End .card-dashboard -->
+                                                    </div>
+                                                    <!-- End .col-lg-6 -->
+
+                                                    <% } } else { %>
+                                                        <div class="col-6 col-md-4 col-xl-3">
+                                                            <p>No Coupon Found</p>
+                                                        </div>
+                                                        <% } %>
+
+                                        </div>
+                                    </div><!-- .End .tab-pane -->
+
+                                    <script>
+                                        // Add event listener to copy coupon code
+                                        document.querySelectorAll('.copy-coupon-btn').forEach(function (button) {
+                                            button.addEventListener('click', function () {
+                                                const couponCode = this.dataset.coupon;
+                                                copyToClipboard(couponCode);
+                                            });
+                                        });
+
+                                        // Function to copy text to clipboard
+                                        function copyToClipboard(text) {
+                                            navigator.clipboard.writeText(text).then(function () {
+                                                Swal.fire({
+                                                    title: 'Copied',
+                                                    text: 'Coupon code copied',
+                                                    background: '#ffffff', // Set the background color to white
+                                                    customClass: {
+                                                        popup: 'white-background', // Add a custom class for additional styling
+                                                    },
+                                                    icon: 'success',
+                                                });
+                                            }).catch(function (err) {
+                                                console.error('Unable to copy to clipboard', err);
+                                            });
+                                        }
+                                    </script>
+
+
+                                </div>
+                            </div><!-- End .col-lg-9 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/resetPassword" method="post" onsubmit="return validationPasswordChecking()">
+                                <div class="form-group">
+                                    <input type="password" id="password" name="password" placeholder="Enter Password" />
+                                    <div id="errorpassword" class="ms-2 text-danger"></div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" id="cpassword" placeholder="Confirm Password" />
+                                    <div id="errorcpassword" class="mt-0 ms-2 text-danger"></div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('fileUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const user_name = document.getElementById("user_name");
+            const errorName = document.getElementById("errorName");
+            const user_phone = document.getElementById("user_phone");
+            const errorMobile = document.getElementById("errorMobile");
+            const fileUpload = document.getElementById("fileUpload");
+            const errorfileUpload = document.getElementById("errorfileUpload");
+            const password = document.getElementById("password");
+            const errorpassword = document.getElementById("errorpassword");
+            const cpassword = document.getElementById("cpassword");
+            const errorcpassword = document.getElementById("errorcpassword");
+
+
+            user_name.addEventListener('input', function () {
+                errorName.innerHTML = user_name.value.trim() === "" ? "Please enter user name" : /^[a-zA-Z ]+$/.test(user_name.value) == false ? "Please enter alphabets only" : "";
+            });
+
+            user_phone.addEventListener('input', function () {
+                errorMobile.innerHTML = user_phone.value.trim() === "" ? "Please enter user phone number" : /^\d{10}$/.test(user_phone.value) == false ? "Please enter valid phone number" : "";
+            });
+
+            password.addEventListener('input', function () {
+                errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+            });
+            cpassword.addEventListener('input', function () {
+                errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+            });
+
+
+        });
+        function validationChecking(event) {
+            const user_name = document.getElementById("user_name");
+            const errorName = document.getElementById("errorName");
+            const user_phone = document.getElementById("user_phone");
+            const errorMobile = document.getElementById("errorMobile");
+            const fileUpload = document.getElementById("fileUpload");
+            const errorfileUpload = document.getElementById("errorfileUpload");
+
+            errorName.innerHTML =
+                user_name.value.trim() === ""
+                    ? "Please enter user name"
+                    : /^[a-zA-Z ]+$/.test(user_name.value) == false
+                        ? "Please enter alphabets only"
+                        : "";
+            errorMobile.innerHTML =
+                user_phone.value.trim() === ""
+                    ? "Please enter user phone number"
+                    : /^\d{10}$/.test(user_phone.value) == false
+                        ? "Please enter valid phone number"
+                        : "";
+
+            const uploadedFile = fileUpload.files[0];
+            const existingImage = document.getElementById("previewImage");
+            const defaultImageSrc = existingImage.getAttribute("src");
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/bmp",
+                "image/webp",
+
+            ];
+
+            if (uploadedFile) {
+                if (!allowedTypes.includes(uploadedFile.type)) {
+                    errorfileUpload.innerHTML = "Please upload a valid image file (JPEG, PNG, GIF)";
+
+                    return false;
+                }
+            } else {
+                // If no new file is selected, maintain the existing image
+                existingImage.setAttribute("src", defaultImageSrc);
+            }
+
+            if (errorName.innerHTML || errorMobile.innerHTML) return false;
+
+            return true;
+        }
+        function validationPasswordChecking(event) {
+            const password = document.getElementById("password");
+            const errorpassword = document.getElementById("errorpassword");
+            const cpassword = document.getElementById("cpassword");
+            const errorcpassword = document.getElementById("errorcpassword");
+            errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+            errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+
+            if (errorpassword.innerHTML || errorcpassword.innerHTML) return false;
+
+            return true;
+        }
+    </script>
+
+    <%- include('../layouts/userFooter.ejs') %>

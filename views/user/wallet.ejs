@@ -1,0 +1,202 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+    <main class="main">
+        <section class="pt-80 pb-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <%- include('../layouts/userSidebar.ejs') %>
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-8 col-lg-10">
+                                            <div class="tab-content d-flex justify-content-center align-items-center">
+                                                <div class="card" style="width: 100vw;">
+                                                    <div
+                                                        class="card-body d-flex flex-column align-items-center justify-content-center">
+                                                        <i class="fa-solid fa-wallet" style="font-size: 50px;"></i>
+                                                        <h3>Wallet Balance</h3>
+                                                        <% if (wallet && wallet.walletBalance !== undefined) { %>
+                                                            <p style="font-size: 30px;">₹ <%= wallet.walletBalance %> </p>
+                                                        <% } else { %>
+                                                            <p>No wallet data found.</p>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-5">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Transaction Type</th>
+                                                            <th scope="col">Date</th>
+                                                            <th scope="col">Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <% if (wallet && wallet.transaction.length> 0) {
+                                                            wallet.transaction.forEach(transactions => { %>
+                                                            <tr>
+                                                                <td>
+
+                                                                    <span class="badge badge-pill bg-success">
+                                                                        <%= transactions.type %>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <%= new Date(transactions.date).toLocaleDateString()
+                                                                        %>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="">
+                                                                        <%= transactions.amount %>
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            <% });} %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <% if (wallet && wallet.transaction.length> 0) { %>
+                        <ul class="pagination">
+                            <% if (currentPage> 1) { %>
+                                <li><a href="/wallet?page=<%= currentPage - 1 %>">Previous</a></li>
+                                <% } %>
+
+                                    <% const totalPages=Math.ceil(wallet.transaction.length / 7); %>
+                                        <% for (let i=1; i <=totalPages; i++) { %>
+                                            <li <% if (i===currentPage) { %>class="active"<% } %>>
+                                                    <a class="text-primary" href="/wallet?page=<%= i %>">
+                                                        <%= i %>
+                                                    </a>
+                                            </li>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li><a href="/wallet?page=<%= currentPage + 1 %>">Next</a></li>
+                                                    <% } %>
+                        </ul>
+                        <% } %>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        // Image preview
+        document.getElementById('fileUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const user_name = document.getElementById("user_name");
+            const errorName = document.getElementById("errorName");
+            const user_phone = document.getElementById("user_phone");
+            const errorMobile = document.getElementById("errorMobile");
+            const fileUpload = document.getElementById("fileUpload");
+            const errorfileUpload = document.getElementById("errorfileUpload");
+            const password = document.getElementById("password");
+            const errorpassword = document.getElementById("errorpassword");
+            const cpassword = document.getElementById("cpassword");
+            const errorcpassword = document.getElementById("errorcpassword");
+
+
+            user_name.addEventListener('input', function () {
+                errorName.innerHTML = user_name.value.trim() === "" ? "Please enter user name" : /^[a-zA-Z ]+$/.test(user_name.value) == false ? "Please enter alphabets only" : "";
+            });
+
+            user_phone.addEventListener('input', function () {
+                errorMobile.innerHTML = user_phone.value.trim() === "" ? "Please enter user phone number" : /^\d{10}$/.test(user_phone.value) == false ? "Please enter valid phone number" : "";
+            });
+
+            password.addEventListener('input', function () {
+                errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+            });
+            cpassword.addEventListener('input', function () {
+                errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+            });
+
+
+        });
+        function validationChecking(event) {
+            const user_name = document.getElementById("user_name");
+            const errorName = document.getElementById("errorName");
+            const user_phone = document.getElementById("user_phone");
+            const errorMobile = document.getElementById("errorMobile");
+            const fileUpload = document.getElementById("fileUpload");
+            const errorfileUpload = document.getElementById("errorfileUpload");
+
+            errorName.innerHTML =
+                user_name.value.trim() === ""
+                    ? "Please enter user name"
+                    : /^[a-zA-Z ]+$/.test(user_name.value) == false
+                        ? "Please enter alphabets only"
+                        : "";
+            errorMobile.innerHTML =
+                user_phone.value.trim() === ""
+                    ? "Please enter user phone number"
+                    : /^\d{10}$/.test(user_phone.value) == false
+                        ? "Please enter valid phone number"
+                        : "";
+
+            const uploadedFile = fileUpload.files[0];
+            const existingImage = document.getElementById("previewImage");
+            const defaultImageSrc = existingImage.getAttribute("src");
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/bmp",
+                "image/webp",
+
+            ];
+
+            if (uploadedFile) {
+                if (!allowedTypes.includes(uploadedFile.type)) {
+                    errorfileUpload.innerHTML = "Please upload a valid image file (JPEG, PNG, GIF)";
+
+                    return false;
+                }
+            } else {
+                // If no new file is selected, maintain the existing image
+                existingImage.setAttribute("src", defaultImageSrc);
+            }
+
+            if (errorName.innerHTML || errorMobile.innerHTML) return false;
+
+            return true;
+        }
+
+        function validationPasswordChecking(event) {
+            const password = document.getElementById("password");
+            const errorpassword = document.getElementById("errorpassword");
+            const cpassword = document.getElementById("cpassword");
+            const errorcpassword = document.getElementById("errorcpassword");
+            errorpassword.innerHTML = password.value.trim() === "" ? "Please enter password" : password.value.length < 8 ? "Please enter a minimum of 8 characters" : "";
+            errorcpassword.innerHTML = cpassword.value.trim() === "" ? "Please enter password" : (cpassword.value !== password.value) ? "Passwords do not match" : "";
+
+            if (errorpassword.innerHTML || errorcpassword.innerHTML) return false;
+
+            return true;
+        }
+    </script>
+
+
+
+    <%- include('../layouts/userFooter.ejs') %>

@@ -1,0 +1,195 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4 mb-3">Dashboard</h1>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-success-light"><i
+                                        class="text-success material-icons md-local_shipping"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Orders</h6> <span>
+                                        <%= totalOrders %>
+                                    </span>
+                                    <span class="text-sm">
+                                        Total number of orders.
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                        class="text-info material-icons md-shopping_basket"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Products</h6> <span>
+                                        <%= totalProducts %>
+                                    </span>
+                                    <span class="text-sm">
+                                        In <%= totalCategories %> Categories
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-warning-light"><i
+                                        class="text-warning material-icons md-qr_code"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Total Categories</h6> <span>&nbsp; <%= totalCategories
+                                            %></span>
+                                    <span class="text-sm">
+                                        In <%= totalCategories %> Categories
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                        class="text-info material-icons md-shopping_basket"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Monthly earning</h6> <span>$&nbsp; <%=
+                                            monthlyEarningsValue %>
+                                    </span>
+                                    <span class="text-sm">
+                                        Total monthly earning.
+                                    </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+                <div class="row d-flex">
+                    <div class="col-xl-9">
+                        <div class="card mb-4">
+                            <article class="card-body">
+                                <h5 class="card-title">Sale statistics</h5>
+                                <input type="hidden" value="<%= monthlyOrderCounts %>" id="monthlySalesArray" />
+                                <input type="hidden" value="<%= dailyOrderCounts %>" id="dailyOrderArray" />
+
+
+                                <input type="hidden" value="<%= yearlyOrderCounts %>" id="yearlyOrderCounts" />
+
+                                <button class="btn btn-xs   btn btn-sm btn-light font-xs rounded"
+                                    onclick="displayChart('Weekly', this)">Weekly</button>
+                                <button class="btn btn-sm btn-light font-xs rounded"
+                                    onclick="displayChart('Monthly', this)">Monthly</button>
+                                <button class="btn btn-sm btn-light font-xs rounded"
+                                    onclick="displayChart('Yearly', this)">Yearly</button>
+                                <canvas id="myBarChart" height="120px"></canvas>
+                                <canvas id="myChartMonthly" height="120px" style="display: none;"></canvas>
+                                <canvas id="myChartYearly" height="120px" style="display: none;"></canvas>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4 text-center">
+                    <header class="card-header">
+                        <h4 class="card-title">Latest orders</h4>
+                    </header>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="table-responsive">
+                                <!-- <table class="table align-middle table-nowrap mb-0"> -->
+                                    <table id="datatablesSimple">
+                                        <thead>
+                                            <tr>
+                                                <th>Order</th>
+                                                <th>Order Date</th>
+                                                <th>Delivery Date</th>
+                                                <th>Total</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Order</th>
+                                                <th>Order Date</th>
+                                                <th>Delivery Date</th>
+                                                <th>Total</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            <% order.forEach(function(order_data) { %>
+                
+                                                <tr>
+                                                    <td>
+                                                        <%= order_data.randomId %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(order_data.orderDate).toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(order_data.deliveryDate).toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= order_data.totalAmount %>
+                                                    </td>
+                                                    <td><a href="/admin/adOrderDetails?id=<%= order_data._id %>"
+                                                            class="btn-small d-block text-decoration-none">View</a></td>
+                                                </tr>
+                                                <% }) %>
+                
+                                        </tbody>
+                                    </table>
+                            </div>
+                        </div> <!-- table-responsive end// -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            // Functions to display respective charts
+            function displayChart(chartType, button) {
+                highlightButton(button);
+
+                if (chartType === 'Weekly') {
+                    showChart('myChartWeekly');
+                    hideChart('myChartMonthly');
+                    hideChart('myChartYearly');
+                } else if (chartType === 'Monthly') {
+                    hideChart('myChartWeekly');
+                    showChart('myChartMonthly');
+                    hideChart('myChartYearly');
+                } else if (chartType === 'Yearly') {
+                    hideChart('myChartWeekly');
+                    hideChart('myChartMonthly');
+                    showChart('myChartYearly');
+                }
+            }
+
+            function showChart(chartId) {
+                document.getElementById(chartId).style.display = 'block';
+            }
+
+            function hideChart(chartId) {
+                document.getElementById(chartId).style.display = 'none';
+            }
+
+            function highlightButton(button) {
+
+                const buttons = document.querySelectorAll('.btn');
+                buttons.forEach(btn => btn.classList.remove('btn-xs'));
+
+                button.classList.add('btn-xs');
+            }
+
+
+        </script>
+
+       
+
+
+        <%- include('../layouts/footeradmin.ejs') %>

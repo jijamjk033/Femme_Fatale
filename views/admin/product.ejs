@@ -1,0 +1,118 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex  container-fluid">
+                    <h1 class="mt-4 mb-3">Product</h1>
+                    <div class="d-flex justify-content-end container-fluid">
+                        <div class="d-flex align-items-center me-3">
+                            <a href="/admin/addProduct" class="rounded-3 btn btn-primary">
+                                <i class="fa-solid fa-plus"></i> Add Product
+                            </a>                
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <a href="/admin/offerProduct" class="rounded-3 btn btn-primary">
+                                <i class="fa-solid fa-plus"></i>Product Offer
+                            </a>                
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        Table
+                    </div>
+                    <div class="card-body">
+                        <table id="datatablesSimple">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Added</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Added</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <% products.forEach(product => { 
+                                    if(product.is_listed){
+                                    %>
+                                    <tr>
+                                        <td>
+                                            <img
+                                            style="width: 40px; height: 40px; border-radius: 5px; border: 1px solid #747474;"
+                                            src="/assets/images/Products/<%= product.image[0] %>"
+                                            alt="<%= product.image[0] %>"
+                                            >&nbsp;
+                                            <%= product.name %>
+                                        </td>
+                                        <td>
+                                            <div class="mt-2">
+                                                <% for (const cat of category) { %>
+                                                    <% if (JSON.stringify(product.category) == JSON.stringify(cat._id)) { %>
+                                                        <%= cat.name %>
+                                                      <% break; %>
+                                                    <% } %>
+                                                <% } %>                                          
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="mt-2">
+                                                <%= product.price %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="mt-2">
+                                                <%= product.productAddDate %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="mt-2">
+                                                <%= product.stock %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="mt-2">
+                                                <% if(product.stock<=10) { %>
+                                                    <div class="rounded-3 text-center bg-warning text-white text-nowrap">Low stock</div>
+                                                <% } else{ %>  
+                                                    <div class="rounded-3 text-center bg-success text-white text-nowrap">In stock</div>
+                                                <% } %>                                          
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-row justify-content-center gap-1">
+                                                <a href="/admin/editProduct/?id=<%= product._id %>" type="button" class="p-2 btn btn-warning"><span class="d-flex align-items-center material-symbols-outlined">
+                                                    edit
+                                                    </span></a>
+                                                <a href="/admin/deleteProduct/<%= product._id %>" type="button" class="p-2 btn btn-danger"><span class="d-flex align-items-center material-symbols-outlined">
+                                                    close
+                                                    </span></a>                          
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+<%- include('../layouts/footeradmin.ejs') %>
+
+   

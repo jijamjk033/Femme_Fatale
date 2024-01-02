@@ -1,0 +1,94 @@
+<%- include('../layouts/userHeader.ejs') %>
+
+    <main class="main">
+        <section class="pt-80 pb-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <%- include('../layouts/userSidebar.ejs') %>
+
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0 text-center">Your Orders</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table text-center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Order Date</th>
+                                                            <th>Delivery Date</th>
+                                                            <th>Total</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% order.forEach((order_data)=> { %>
+                                                            <tr>
+                                                                <td>
+                                                                    <%= order_data.randomId %>
+                                                                        <!-- Displaying order.randomNumber -->
+                                                                </td>
+                                                                <td>
+                                                                    <%= new
+                                                                        Date(order_data.orderDate).toLocaleDateString()
+                                                                        %>
+                                                                </td>
+                                                                <td>
+                                                                    <%= new
+                                                                        Date(order_data.deliveryDate).toLocaleDateString()
+                                                                        %>
+                                                                </td>
+                                                                <td>
+                                                                    <%= order_data.totalAmount %>
+                                                                </td>
+                                                                <td><a href="/orderDetails/<%= order_data._id%>"
+                                                                        class="btn-small d-block text-primary">View</a>
+                                                                </td>
+                                                            </tr>
+                                                            <% }); %>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        <!-- Pagination Controls -->
+                        <div class="d-flex justify-content-end">
+                            <% if (order.length> 0) { %>
+                                <ul class="pagination">
+                                    <% if (currentPage> 1) { %>
+                                        <li><a href="/orderList?page=<%= currentPage - 1 %>">Previous</a></li>
+                                        <% } %>
+
+                                            <% const totalPages=Math.ceil(order.length / 10); %>
+                                                <% for (let i=1; i <=totalPages; i++) { %>
+                                                    <li <% if (i===currentPage) { %>class="active"<% } %>>
+                                                            <a class="text-primary" href="/orderList?page=<%= i %>">
+                                                                <%= i %>
+                                                            </a>
+                                                    </li>
+                                                    <% } %>
+
+
+                                                        <% if (currentPage < totalPages) { %>
+                                                            <li><a
+                                                                    href="/orderList?page=<%= currentPage + 1 %>">Next</a>
+                                                            </li>
+                                                            <% } %>
+                                </ul>
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('../layouts/userFooter.ejs') %>

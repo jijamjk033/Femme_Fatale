@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= locals.title %>
+  </title>
+  <meta name="description" content="<%= locals.description %>" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div style="background-image: url('./assets/images/background/240_F_538627760_ah9BPKQ0K4d9PnJ6O5UrsPATy1IaY3ne.jpg'); background-repeat: no-repeat; background-size: cover;" class="image-fluid">
+    <nav class="navbar navbar-expand-lg bg-body-transparent d-flex position-absolute fixed-top">
+      <div class="container container-logo " style="margin:0 0 0 20px; width: 25vw;">
+        <a id="logo_ff" href="#"><img class="img-fluid ustify-content-start"
+            src="./assets/images/Logo/FemmeFatale_logo.png" alt="logo_ff"></a>
+      </div>
+    </nav>
+    <div class="image-fluid container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 mt-4">
+          <!-- Login Form -->
+          <div style="background-image: url('./assets/images/background/360_F_252462576_koy7njo9iYx6gUcM26IZcDUs9fMKIKJs.jpg'); background-repeat: no-repeat; background-size: cover; margin-top: 15vh; margin-bottom: 17vh;" class="card bg-light bg-opacity-10 image-fluid">
+            <div class="card-body pt-4 pb-4">
+              <h1 class="card-title text-center pb-3 text-dark">Admin Login</h1>
+                <form action="/admin" method="post">
+                <div class="mb-3">
+                    <p class="text-dark">Username</p>
+                    <input type="email" name="email" class="form-control text-muted" required
+                    placeholder="example@email.com" />
+                    <div
+                    id="erroremail"
+                    class=" ms-2  text-danger">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p class="text-dark">Password</p>
+                    <input type="password" name="password" class="form-control text-muted" required
+                    placeholder="Enter your password" />
+                    <div
+                    id="errorpassword"
+                    class="ms-2 text-danger">
+                    </div>
+                </div>
+                <div class="text-center mb-3"><a href="" class="text-decoration-none">Forgot password?</a></div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-50 rounded-pill mb-3">Login</button>
+                </div>
+                <% if (typeof message !=='undefined' ) { %>
+                  <div style="height: 30px; padding-top: 4px" class="text-danger text-center">
+                    <h6>
+                      <%= message %>
+                    </h6>
+                  </div>
+                <% } %>
+                </form>
+            </div>
+          </div>
+          <!-- End Login Form -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

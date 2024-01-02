@@ -1,0 +1,102 @@
+<%- include('../layouts/headeradmin.ejs') %>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid">
+                    <h1 class="mt-4 mb-3">Editing: <%= category.name %>
+                    </h1>
+                </div>
+                <form action="/admin/edit-category" method="post" enctype="multipart/form-data" id="category-form"
+                    onsubmit="return validateCategoryForm()">
+                    <section class="content-main">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Basic</h4>
+                                    </div>
+                                    <input type="hidden" name="id" value="<%= category._id %>">
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="category_name" class="form-label">Category name</label>
+                                            <input type="text" name="name" placeholder="Type here"
+                                                value="<%= category.name %>" class="form-control" id="category_name">
+                                            <div class="error-message" style="color: red;" id="category_name-error">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea name="description" id="description" placeholder="Type here"
+                                                class="form-control" rows="4"><%= category.description %></textarea>
+                                            <div class="error-message" style="color: red;" id="description-error"></div>
+                                        </div>
+                                    </div>
+                                </div> <!-- card end// -->
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Picture</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="input-upload">
+                                            <div
+                                                style="display: flex; margin-bottom: 20px; justify-content: center; align-items: center;">
+                                                <img src="/assets/images/Products/<%= category.image %>" alt="..." id="previewImage"
+                                                    style="width: 100px; height: 100px;"
+                                                    onchange="validateCategoryImage(this)">
+                                            </div>
+                                            <input class="form-control" type="file" name="image" id="category_image">
+                                        </div>
+                                    </div>
+                                </div> <!-- card end// -->
+                                <div>
+                                    <input type="submit" value="submit"
+                                        class="btn btn-primary btn-md rounded font-sm hover-up">
+                                </div>
+                            </div>
+                        </div>
+                    </section> <!-- content-main end// -->
+                </form>
+                <div style="position: relative; width: 100%;" class="justify-content-center text-center">
+                    <% if (typeof errorMessage !=='undefined' ) { %>
+                        <p
+                            style="position: absolute; transform: translate(-50%, -50%); left: 50%; color: crimson; white-space: nowrap;">
+                            <%= errorMessage %>
+                        </p>
+                        <% } %>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            document.getElementById('category_image').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']; // Add more if needed
+
+                if (file && validImageTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('previewImage').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    event.target.value = ''; // Reset the input value to clear the invalid file
+                    alert('Please select a valid image file (JPEG, PNG, GIF, BMP)');
+                }
+            });
+
+
+
+            function validateCategoryImage(input) {
+                const file = input.files[0];
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp','image/webp']; // Add more if needed
+
+                if (!file || !validImageTypes.includes(file.type)) {
+                    input.value = ''; // Reset the input value to clear the invalid file
+                    alert('Please select a valid image file (JPEG, PNG, GIF, BMP)');
+                }
+            }
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>

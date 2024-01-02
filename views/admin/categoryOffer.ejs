@@ -1,0 +1,92 @@
+<%- include('../layouts/headeradmin.ejs') %>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <div class="p-0 d-flex justify-content-between container-fluid mb-3">
+                    <h1 class="mt-4 mb-3">Categories</h1>
+                </div>
+                <div class="row">
+                    <% categories.forEach(category=>{ %>
+                        <div class="col-lg-3">
+                            <div class="card text-center mb-4">
+                                <div class="card-header">
+                                    <h4>Offer</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-upload">
+                                        <img style="height: 27vh; width: 20 vh;"
+                                        src="/assets/images/Products/<%=category.image%>" alt="">
+                                        <form action="/admin/updateCategoryOffer" method="post">
+                                            <h4>
+                                                <%= category.name %>
+                                            </h4><br>
+                                            <h6><label for="offer">Apply Category offer</label></h6>
+                                            <input class="form-control text-center" name="offerPercentage" type="text">
+                                            <input class="form-control " name="id" type="hidden"
+                                                value="<%= category._id %>">
+                                            <button class="btn btn-sm btn-light rounded mt-2"
+                                                style="color: rgb(255, 255, 255); background-color: rgb(70, 149, 122);"
+                                                type="submit">save</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div> <!-- card end// -->
+
+                        </div>
+
+                        <%})%>
+
+                            <!-- pagination  -->
+                            <% if (totalpages) { %>
+                                <div class="pagination justify-content-center">
+                                    <% if (currentpage> 1) { %>
+                                        <button class="btn btn-sm"><a
+                                                href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                                        <% } %>
+
+                                            <% for (let i=1; i <=totalpages; i++) { %>
+                                                <!-- Change the loop to start from 1 and go up to totalpages -->
+                                                <button class="btn btn-sm"><a href="?page=<%= i %>"
+                                                        class="<%= i === currentpage ? 'active' : '' %>">
+                                                        <%= i %>
+                                                    </a></button>
+                                                <% } %>
+
+                                                    <% if (currentpage < totalpages) { %>
+                                                        <button class="btn btn-sm"><a
+                                                                href="?page=<%= currentpage + 1 %>">Next</a></button>
+                                                        <% } %>
+                                </div>
+                                <% } %>
+                </div>
+            </div>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("searchInput");
+                const table = document.getElementById("products");
+                const rows = table.getElementsByTagName("tr");
+
+                searchInput.addEventListener("keyup", function () {
+                    const searchText = searchInput.value.toLowerCase();
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const rowData = rows[i].textContent.toLowerCase();
+                        if (rowData.includes(searchText)) {
+                            rows[i].style.display = "";
+                        } else {
+                            rows[i].style.display = "none";
+                        }
+                    }
+                });
+            });
+
+
+        </script>
+
+        <%- include('../layouts/footeradmin.ejs') %>
