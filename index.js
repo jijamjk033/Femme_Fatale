@@ -13,6 +13,7 @@ require("dotenv").config();
 //   });
 
 //Atlas
+
 mongoose.connect(`${process.env.MONGODB}`,{
     useNewUrlParser: true,
     useUnifiedTopology: true

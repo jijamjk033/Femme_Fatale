@@ -68,19 +68,19 @@
                     <% if (wallet && wallet.transaction.length> 0) { %>
                         <ul class="pagination">
                             <% if (currentPage> 1) { %>
-                                <li><a href="/wallet?page=<%= currentPage - 1 %>">Previous</a></li>
+                                <li><a class="me-2" href="/wallet?page=<%= currentPage - 1 %>">Previous</a></li>
                                 <% } %>
 
                                     <% const totalPages=Math.ceil(wallet.transaction.length / 7); %>
                                         <% for (let i=1; i <=totalPages; i++) { %>
                                             <li <% if (i===currentPage) { %>class="active"<% } %>>
-                                                    <a class="text-primary" href="/wallet?page=<%= i %>">
+                                                    <a class="text-primary me-2" href="/wallet?page=<%= i %>">
                                                         <%= i %>
                                                     </a>
                                             </li>
                                             <% } %>
                                                 <% if (currentPage < totalPages) { %>
-                                                    <li><a href="/wallet?page=<%= currentPage + 1 %>">Next</a></li>
+                                                    <li><a href="/wallet?page=<%= currentPage + 1 %>"> Next</a></li>
                                                     <% } %>
                         </ul>
                         <% } %>
