@@ -41,6 +41,6 @@ const adminRoute = require("./routes/adminRoute");
 app.use('/admin',adminRoute);
 
 app.listen(3030, ()=>{
-    console.log("Server is running on port:  https://femmefataleonline.shop/");
+    console.log("Server is running on port:  http://localhost:3030");
 });
 
