@@ -193,7 +193,7 @@ const verifyOtp = async (req, res) => {
             }
 
           }
-          
+          req.session.userRegistration=false;
           return res.redirect("/login");
 
         } else {
@@ -386,7 +386,7 @@ const confirmPassword = async (req, res) => {
       return res.render('confirmPassword', { message: "Please enter a valid Password" });
     }
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email:email });
 
     if (!user) {
       return res.render('confirmPassword', { message: "User not found" });
@@ -430,7 +430,6 @@ const resetPassword = async (req, res) => {
     const confirmPassword = req.body.confirmPassword;
     const userId = req.session.user_id;
     const userData = await User.findById(userId);
-
     if (!newPassword || !confirmPassword) {
       return res.render('resetPassword', { message: "Fields should not be empty" });
     }
@@ -444,10 +443,17 @@ const resetPassword = async (req, res) => {
     if (!isPasswordValid) {
       return res.render('resetPassword', { message: "Check your current password" });
     }
+
+    if (newPassword !== confirmPassword) {
+      return res.render('resetPassword', { message: "Passwords do not match" });
+    }
+
     const hashedPassword = await securePassword(newPassword);
 
+    // Update the user's password and save
     userData.password = hashedPassword;
     await userData.save();
+
     return res.redirect("/profile");
   } catch (error) {
     console.log(error.message);

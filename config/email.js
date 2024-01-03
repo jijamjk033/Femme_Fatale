@@ -4,7 +4,7 @@ require('dotenv').config()
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.USER,
+    user: process.env.MAILER,
     pass: process.env.PASSWORD,
   },
 });
@@ -14,7 +14,7 @@ const sendVarifyMail = async (email,req) => {
   const otp = generateOTP(4)
   req.session.otp = otp
   const mailOptions = {
-    from: process.env.USER,
+    from: process.env.MAILER,
     to: email,
     subject: 'Your OTP Code for verification',
     text: `Your OTP code is: ${otp}`,

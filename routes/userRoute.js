@@ -46,7 +46,7 @@ user_route.get('/forgotPassword',auth.isLogout,userController.loadForgotPassword
 user_route.post('/forgotPassword',auth.isLogout,userController.forgetPassword);
 user_route.post('/confirmPassword',auth.isLogout,userController.confirmPassword);
 user_route.get('/resetPassword',auth.isLogin,userController.loadResetPassword);
-user_route.post('/resetPassword',auth.isLogout,userController.resetPassword);
+user_route.post('/resetPassword',auth.isLogin,userController.resetPassword);
 
 // cart controller
 user_route.get('/cart',auth.isLogin,cartController.loadCartPage );
