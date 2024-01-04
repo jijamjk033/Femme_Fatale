@@ -40,6 +40,11 @@ app.use('/',userRoute);
 const adminRoute = require("./routes/adminRoute");
 app.use('/admin',adminRoute);
 
+app.use((req, res, next) => {
+    res.status(404).render("./layouts/404error", { userData: null });
+  });
+  
+
 app.listen(3030, ()=>{
     console.log("Server is running on port:  http://localhost:3030");
 });

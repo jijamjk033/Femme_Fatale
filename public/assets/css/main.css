@@ -2249,6 +2249,7 @@ label {
   padding: 5px 10px;
   font-size: 18px;
 }
+
 /*COMPONENTS -> TABS*/
 .nav-tabs {
   margin-bottom: 25px;
@@ -2322,7 +2323,7 @@ label {
   position: relative;
 }
 
-.dashboard-menu ul li:hover{
+.dashboard-menu ul li:hover {
   cursor: pointer;
   background-color: #fee8f0;
 }
@@ -6316,7 +6317,7 @@ h6.post-title {
   align-items: center;
 }
 
-.mobile-header-wrapper-style .mobile-header-wrapper-inner .mobile-header-top .mobile-header-logo_ff a img {
+.mobile-header-wrapper-style .mobile-header-wrapper-inner .mobile-header-top .mobile-header-logo a img {
   width: 100px;
 }
 
@@ -6562,7 +6563,7 @@ h6.post-title {
 /* Header style 2 */
 .header-style-2 .header-top-ptb-1 {
   padding: 10px 0;
-  border-bottom: 3px solid #781d5d!important;
+  border-bottom: 3px solid #781d5d !important;
   font-size: 14px;
   line-height: 1;
   background: #fff;
@@ -6788,7 +6789,7 @@ h6.post-title {
 }
 
 .header-style-4 .hotline p {
-  color: #781d5d!important;
+  color: #781d5d !important;
 }
 
 .header-style-4 .stick .hotline p {
@@ -9322,11 +9323,11 @@ span.fi-rs-apps {
 }
 
 @media only screen and (max-width: 768px) {
-  .logo.logo_ff-width-1 {
+  .logo.logo-width-1 {
     margin-right: 0;
   }
 
-  .logo.logo_ff-width-1 a img {
+  .logo.logo-width-1 a img {
     width: 120px;
   }
 
@@ -9361,7 +9362,7 @@ span.fi-rs-apps {
     margin-right: 10px;
   }
 
-  .header-style-5 .logo.logo_ff-width-1 {
+  .header-style-5 .logo.logo-width-1 {
     margin-right: 0;
   }
 
@@ -9636,7 +9637,9 @@ span.fi-rs-apps {
   .header-action .header-action-icon {
     margin-right: 33px;
   }
-
+  .header-white-pink{
+    background-color:#EF8AAE!important;
+  }
   .header-action .header-action-icon.header-action-mrg-none {
     margin-right: 33px;
   }
@@ -9692,9 +9695,24 @@ span.fi-rs-apps {
 }
 
 /*Desktop*/
+@media only screen and (max-width: 992px){
+.header-white-pink{
+  background-color:#EF8AAE!important;
+}
+}
+
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
+
   .logo.logo-hm3 a img {
     width: 120px;
+  }
+
+  .mobileCart a img {
+    display: none;
+  }
+
+  .mobileCart a p {
+    display: none;
   }
 
   .header-style-5 .search-style-2 {
@@ -9799,6 +9817,24 @@ span.fi-rs-apps {
 @media only screen and (min-width: 1200px) and (max-width: 1365px) {
   .main-menu.main-menu-padding-1>nav>ul>li {
     padding: 0 14px;
+  }
+
+  .mobileCart a img {
+    display: none;
+  }
+
+  .mobileCart a p {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 1365px) {
+  .mobileCart a img {
+    display: none;
+  }
+
+  .mobileCart a p {
+    display: none;
   }
 }
 
