@@ -83,6 +83,7 @@ const loadCategory = async (req, res) => {
     }
   };
 
+  
   const unlistCategory = async (req, res) => {
     try {
       const id = req.query.id;

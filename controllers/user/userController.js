@@ -140,7 +140,7 @@ const verifyOtp = async (req, res) => {
           password: securedPassword,
           referralCode: referral,
           is_admin: 0,
-          is_blocked: 1,
+          is_blocked: 0,
         });
         const userDataSave = await user.save();
 
